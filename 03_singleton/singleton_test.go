@@ -14,3 +14,11 @@ func TestSingleton(t *testing.T) {
 	}
 
 }
+func TestSingleNil(t *testing.T) {
+	leader1 := GetLeader()
+	var ll leader
+	(*leader1) = ll
+	t.Log(leader1) //nil
+	leader2 := GetLeader()
+	t.Log(leader2) //非空
+}

@@ -1,26 +1,25 @@
 package singleton
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+)
 
-var leader *Leader
+var l *leader
 
-//此包只能有一个once，才能保证只执行一次
 var once sync.Once
 
-type Leader struct {
+type leader struct {
 	Name string
 }
 
-func newSingleton() *Leader {
-	return &Leader{
-		Name: "duyq",
-	}
+func (l *leader) Look() {
+	fmt.Printf("hello %s", l.Name)
 }
 
-//获取单例模式的对象，不用进行非空判断也是正确的
-func GetLeader() *Leader {
+func GetLeader() *leader {
 	once.Do(func() {
-		leader = newSingleton()
+		l = &leader{Name: "duyq"}
 	})
-	return leader
+	return l
 }
