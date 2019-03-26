@@ -2,43 +2,46 @@ package prototype
 
 import "fmt"
 
-type CPU interface {
-	Compute(string) string
+const (
+	NoteBookType = "notebook"
+	PageInfoType = "pageinfo"
+)
+
+type Message interface {
+	Print()
 }
 
-type GaoTongCPU struct {
-	CoreType string
+type NoteBook struct {
+	Msg string
 }
 
-func newGaoTongCPU(cstr string) *GaoTongCPU {
-	return &GaoTongCPU{
-		CoreType: cstr,
+func (n *NoteBook) Print() {
+	fmt.Printf("msg is %s\n", n.Msg)
+}
+
+type Pages struct {
+	Info string
+}
+
+func (p *Pages) Print() {
+	fmt.Printf("info is %s\n", p.Info)
+}
+
+type MessageCache struct {
+	msgs map[string]Message
+}
+
+func NewMessageCache() *MessageCache {
+	ms := make(map[string]Message)
+	note := &NoteBook{Msg: "hello moto"}
+	ms[NoteBookType] = note
+	page := &Pages{Info: "hello apple"}
+	ms[PageInfoType] = page
+	return &MessageCache{
+		msgs: ms,
 	}
 }
 
-func (c *GaoTongCPU) Compute(cstr string) string {
-	return fmt.Sprintf("GaoTong %s", cstr)
-}
-
-type CPUManager struct {
-	CoreType string
-	pool     []CPU
-}
-
-func NewGaoTongCPUManager(cstr string) *CPUManager {
-	cm := CPUManager{
-		pool: []CPU{},
-	}
-	mc := newGaoTongCPU(cstr)
-	cm.pool = append(cm.pool, mc)
-	return &cm
-}
-
-func (c *CPUManager) Get() CPU {
-	if len(c.pool) == 0 {
-		mc := newGaoTongCPU(c.CoreType)
-		c.pool = append(c.pool, mc)
-	}
-	conn := c.pool[0]
-	return conn
+func (m *MessageCache) GetMessage(t string) Message {
+	return m.msgs[t]
 }
